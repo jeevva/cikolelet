@@ -1,46 +1,32 @@
 
- <div class="container">
 
-    <div class="row  mt-5 justify-content-center">
-         <div class="card shadow mb-4">
-             <!-- Card Header - Dropdown -->
-             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                 <h5 class="m-0 font-weight-bold text-primary">Profil Admin</h5>
-                 
-             </div>
-             <!-- Card Body -->
-             <div class="card-body">
-                 
-            
-               <div class="col-lg profil-form">
-                        <div class="text-center">
-                            <img src="<?= base_url(""); ?>assets/img/person.png" class="rounded-circle w-25  mb-4" alt="Account">
-                        </div>
-                        <div class="widget-title-outer">
-                            <h3 class="widget-title"></h3>
-                        </div>
-                        <table class="table  table-borderless table-striped table-condensed ">
-
-                            <tbody>
-                                
-                                <tr>
-                                    <th scope="row">Nama Lengkap</th>
-                                    <td><?= $nama; ?></td>
-
-                                </tr>
-                                 <tr>
-                                    <th scope="row">Email</th>
-                                    <td colspan="2"><?= $emails; ?></td>
-
-                                </tr>
-                               
-                            </tbody>
-                        </table>
-
-                        <a href="<?= base_url("admin/profil/changepassword"); ?>" class="btn btn-primary w-100 d-block text-center">Ubah Password</a>
-                        <!-- <a href="<? //= base_url("user/edit") 
-                                        ?>" class="btnSubmit w-100 d-block text-center">Edit Profil</a> -->
-                </div>
+<h5>Edit User</h5>
+<div class="row">
+    <div class="col-md-6">
+        <form action="<?= base_url("admin/user/update/") . $admin['id_admin']; ?>" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="name">Nama Admin</label>
+                <input type="text" class="form-control" id="name" name="name" value="<?= $admin['name'] ?>"  required>
             </div>
+            <div class="form-group">
+                <label for="nama">Email Admin</label>s
+                <input type="email" class="form-control" id="emails" name="emails" value="<?= $admin['emails'] ?>"  required>
+            </div> 
+
+            <div class="form-group">    
+            <label for="role">Role</label>
+                <select class="form-control " id="role" name="role" required="true" >
+                    <option value="" disabled selected>Pilih Role </option>
+                    <option value="0" >Super Admin </option>
+                    <option value="1" >Staff</option>
+
+                </select>
+            </div>
+
+
+
+            <button type="submit" class="btn btn-primary">Edit</button>
+        </form>
     </div>
-     
+</div>
+

@@ -95,7 +95,7 @@ class Pengajuan extends CI_Controller
             redirect('admin/pengajuan');
         }
     }
-
+  
 
     public function reject()
     {

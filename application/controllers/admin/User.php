@@ -97,6 +97,151 @@ class User extends CI_Controller
         $this->load->view('layouts/backend/main_layout', $data);
     }
 
+    public function add()
+    {
+       
+        $data['page'] = 'admin/user/add';
+        $data['active'] = 'user';
+        $data['admin'] = $this->db->get_where('admin', ["id_admin" => $id])->row_array();
+        $data['user'] = $this->db->get_where('admin', ['emails' => $this->session->userdata("emails")])->row_array();
+        $data['desa'] = $this->db->get("profil_desa")->result_array();
+        $this->load->view('layouts/backend/main_layout', $data);
+
+    }
+    public function save()
+    {
+ 
+        // rules
+        // params 1 (name), params 2 (alias), params 3 (rules nya)
+        // rules is_unique digunakan untuk mengecek apakah email yg diinput sudah terdaftar di databse apa belum.
+        $this->form_validation->set_rules('name', 'Name', 'required|trim');
+        $this->form_validation->set_rules('emails', 'Emails', 'required|trim|valid_email|is_unique[admin.emails]', [
+            'is_unique' => 'email sudah terdaftar'
+        ]);
+        $this->form_validation->set_rules('role', 'role', 'required|trim');
+        $this->form_validation->set_rules('password1', 'Password', 'required|trim|min_length[6]|matches[password2]', [
+            'matches' => 'Password tidak cocok!',
+            'min_length' => 'Password terlalu pendek'
+        ]);
+        $this->form_validation->set_rules('password2', 'Password', 'required|trim|matches[password1]');
+
+        if ($this->form_validation->run() == false) {
+            // $data['title'] = 'Tambah User';
+            // $data['page'] = 'admin/user/add';
+            // $data['admin'] = $this->db->get_where('admin', ["id_admin" => $id])->row_array();
+            // $data['user'] = $this->db->get_where('admin', ['emails' => $this->session->userdata("emails")])->row_array();
+            // $data['desa'] = $this->db->get("profil_desa")->result_array();
+            // $this->load->view('layouts/backend/auth_layout', $data);
+            $data['page'] = 'admin/user/add';
+            $data['active'] = 'user';
+            $data['admin'] = $this->db->get_where('admin', ["id_admin" => $id])->row_array();
+            $data['user'] = $this->db->get_where('admin', ['emails' => $this->session->userdata("emails")])->row_array();
+            $data['desa'] = $this->db->get("profil_desa")->result_array();
+            $this->load->view('layouts/backend/main_layout', $data);
+        } else {
+            // role_id 2 adalah default user sebagai member untuk administrtor role_id nya 2
+            $data = [
+                'name' => htmlspecialchars($this->input->post('name', true)),
+                'emails' => htmlspecialchars($this->input->post('emails', true)),
+                'role' => htmlspecialchars($this->input->post('role', true)),
+                'image' => 'default.jpg',
+                'password' => password_hash($this->input->post('password1'), PASSWORD_DEFAULT),
+                'is_active' => 1,
+                'created_at' => time()
+            ];
+
+            // insert ke database
+            $this->db->insert('admin', $data);
+            $this->session->set_flashdata('add', '<div class="alert alert-success text-center">Sukses menambah User</div>');
+            redirect('admin/user/list');
+        }
+    }
+
+    public function edit($id)
+    {
+        // $data['page'] = 'admin/user/edit';
+        // $data['active'] = 'user';
+        // $data['userList'] = $this->db->order_by('name asc')->get('admin')->result_array();
+        $data['page'] = 'admin/user/edit';
+        $data['active'] = 'user';
+        $data['admin'] = $this->db->get_where('admin', ["id_admin" => $id])->row_array();
+        $data['user'] = $this->db->get_where('admin', ['emails' => $this->session->userdata("emails")])->row_array();
+        $data['desa'] = $this->db->get("profil_desa")->result_array();
+        $this->load->view('layouts/backend/main_layout', $data);
+
+    }
+
+    public function editpassword($id)
+    {
+        // $data['page'] = 'admin/user/edit';
+        // $data['active'] = 'user';
+        // $data['userList'] = $this->db->order_by('name asc')->get('admin')->result_array();
+        $data['page'] = 'admin/user/editpassword';
+        $data['active'] = 'user';
+        $data['admin'] = $this->db->get_where('admin', ["id_admin" => $id])->row_array();
+        $data['user'] = $this->db->get_where('admin', ['emails' => $this->session->userdata("emails")])->row_array();
+        $data['desa'] = $this->db->get("profil_desa")->result_array();
+        $this->load->view('layouts/backend/main_layout', $data);
+
+    }
+
+    public function update($id)
+    {
+        
+        $user = $this->db->get_where('admin', ['emails' => $this->session->userdata("emails")])->row_array();
+       
+        $where = ['id_admin' => $id];
+
+      
+            $data = [
+                "name" => $this->input->post("name"),
+                "emails" => $this->input->post("emails"),
+                "role" => $this->input->post("role")
+                // "id_admin" => $user['id_admin']
+               
+            ];
+            $update = $this->db->update('admin', $data, $where);
+    
+
+        if ($update) {
+            $this->session->set_flashdata('add', '<div class="alert alert-success text-center">Sukses ubah data</div>');
+            redirect('admin/user/list');
+        } else {
+            $this->session->set_flashdata('add', '<div class="alert alert-danger text-center">Gagal ubah data</div>');
+            redirect('admin/user/list');
+        }
+    }
+    public function updatepassword($id)
+    {
+        
+        $user = $this->db->get_where('admin', ['emails' => $this->session->userdata("emails")])->row_array();
+       
+        $where = ['id_admin' => $id];
+
+        // $this->db->set('password',$password_hash);
+        // $this->db->get_where('admin', ['emails' => $this->session->userdata('emails')])->row_array();
+        // $this->db->update('admin');
+      
+            $data = [
+                'password' => password_hash($this->input->post('password'), PASSWORD_DEFAULT),
+                // "password" => $this->input->post->password_hash("password"),
+                
+                // $this->db->set('password',$password_hash)
+                // "id_admin" => $user['id_admin']
+               
+            ];
+            $update = $this->db->update('admin', $data, $where);
+    
+
+        if ($update) {
+            $this->session->set_flashdata('add', '<div class="alert alert-success text-center">Sukses ubah data</div>');
+            redirect('admin/user/list');
+        } else {
+            $this->session->set_flashdata('add', '<div class="alert alert-danger text-center">Gagal ubah data</div>');
+            redirect('admin/user/list');
+        }
+    }
+
     
     public function deletelist($id)
     {
@@ -110,3 +255,34 @@ class User extends CI_Controller
         }
     }
 }
+
+
+
+
+// public function updatepassword($id)
+//     {
+        
+//         $user = $this->db->get_where('admin', ['emails' => $this->session->userdata("emails")])->row_array();
+       
+//         $where = ['id_admin' => $id];
+
+      
+//             $data = [
+//                 $password = $this->input->post('password');
+//                 $password_hash = password_hash($password, PASSWORD_DEFAULT);
+//                 $this->db->set('password',$password_hash);
+
+               
+//             ];
+//             $update = $this->db->update('admin', $data, $where);
+    
+
+//         if ($update) {
+//             $this->session->set_flashdata('add', '<div class="alert alert-success text-center">Sukses ubah data</div>');
+//             redirect('admin/user/list');
+//         } else {
+//             $this->session->set_flashdata('add', '<div class="alert alert-danger text-center">Gagal ubah data</div>');
+//             redirect('admin/user/list');
+//         }
+//     }
+

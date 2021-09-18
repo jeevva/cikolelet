@@ -64,14 +64,14 @@
           <span>Dashboard</span></a>
       </li>
       <?php if ( $user['role'] == 0): ?>
-      <li class="nav-item <?= $active == 'home' ? "active" : ""; ?>">
+      <li class="nav-item <?= $active == 'desa' ? "active" : ""; ?>">
         <a class="nav-link" href="<?= base_url("/admin/desa"); ?>">
           <i class="fas fa-fw fa-address-card"></i>
           <span>Profil Desa</span></a>
       </li>
      
       <!-- User -->
-      <li class="nav-item <?= $active == 'jenis' ? "active" : ""; ?>">
+      <li class="nav-item <?= $active == 'user' ? "active" : ""; ?>">
         <a class="nav-link" href="<?= base_url("admin/user/list") ?>">
           <i class="fas fa-fw fa-book"></i>
           <span>User</span></a>
@@ -80,7 +80,7 @@
         <?php else : ?>
       <?php endif;?>
        <!-- Kategori -->
-       <li class="nav-item <?= $active == 'jenis' ? "active" : ""; ?>">
+       <li class="nav-item <?= $active == 'kategori' ? "active" : ""; ?>">
         <a class="nav-link" href="<?= base_url("admin/kategori") ?>">
           <i class="fas fa-fw fa-book"></i>
           <span>Kategori</span></a>
